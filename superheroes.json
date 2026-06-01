@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Spider-Man",
+    "real_name": "Peter Parker",
+    "universe": "Marvel",
+    "first_appearance": 1962,
+    "powers": ["Wall-Crawling", "Super Strength", "Spider-Sense", "Web Shooting"]
+  },
+  {
+    "id": 2,
+    "name": "Superman",
+    "real_name": "Clark Kent",
+    "universe": "DC",
+    "first_appearance": 1938,
+    "powers": ["Flight", "Super Strength", "Heat Vision", "X-Ray Vision", "Invulnerability"]
+  },
+  {
+    "id": 3,
+    "name": "Black Widow",
+    "real_name": "Natasha Romanoff",
+    "universe": "Marvel",
+    "first_appearance": 1964,
+    "powers": ["Master Martial Artist", "Expert Marksmanship", "Espionage"]
+  },
+  {
+    "id": 4,
+    "name": "Wonder Woman",
+    "real_name": "Diana Prince",
+    "universe": "DC",
+    "first_appearance": 1941,
+    "powers": ["Flight", "Super Strength", "Lasso of Truth", "Invulnerability", "Combat Mastery"]
+  },
+  {
+    "id": 5,
+    "name": "Thor",
+    "real_name": "Thor Odinson",
+    "universe": "Marvel",
+    "first_appearance": 1962,
+    "powers": ["Flight", "Super Strength", "Lightning Control", "Mjolnir Mastery"]
+  },
+  {
+    "id": 6,
+    "name": "The Flash",
+    "real_name": "Barry Allen",
+    "universe": "DC",
+    "first_appearance": 1956,
+    "powers": ["Super Speed", "Time Travel", "Phasing Through Objects"]
+  }
+]
