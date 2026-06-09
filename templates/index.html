@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rubric Comment Viewer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #2d3748;
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  header h1 { font-size: 1.25rem; font-weight: 600; }
+
+  .controls {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .control-group { display: flex; flex-direction: column; gap: .35rem; }
+  label { font-size: .8rem; font-weight: 600; color: #4a5568; text-transform: uppercase; letter-spacing: .05em; }
+  select {
+    padding: .5rem .75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: .375rem;
+    font-size: .95rem;
+    min-width: 180px;
+    background: #fff;
+    cursor: pointer;
+  }
+  select:focus { outline: 2px solid #4299e1; outline-offset: 1px; }
+
+  main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+
+  .placeholder {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #a0aec0;
+    font-size: 1.1rem;
+  }
+
+  .task-header {
+    margin-bottom: 1.5rem;
+  }
+  .task-header h2 { font-size: 1.4rem; font-weight: 700; }
+  .task-header .meta { font-size: .85rem; color: #718096; margin-top: .25rem; }
+
+  .criteria-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .criterion-card {
+    background: #fff;
+    border-radius: .5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+  .criterion-title {
+    background: #2d3748;
+    color: #fff;
+    padding: .75rem 1.25rem;
+    font-weight: 600;
+    font-size: .95rem;
+  }
+  .criterion-description {
+    padding: .6rem 1.25rem;
+    font-size: .85rem;
+    color: #718096;
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+  }
+
+  .achievement-cell {
+    border-right: 1px solid #e2e8f0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    position: relative;
+  }
+  .achievement-cell:last-child { border-right: none; }
+
+  .achievement-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .level-A { background: #c6f6d5; color: #22543d; }
+  .level-B { background: #bee3f8; color: #2a4365; }
+  .level-C { background: #fefcbf; color: #744210; }
+  .level-D { background: #fed7aa; color: #7b341e; }
+  .level-E { background: #fed7d7; color: #742a2a; }
+
+  .comment-body {
+    font-size: .875rem;
+    line-height: 1.55;
+    color: #2d3748;
+    flex: 1;
+  }
+  .empty-comment { color: #a0aec0; font-style: italic; font-size: .8rem; }
+
+  .copy-btn {
+    align-self: flex-end;
+    background: none;
+    border: 1px solid #cbd5e0;
+    border-radius: .3rem;
+    padding: .25rem .5rem;
+    font-size: .75rem;
+    cursor: pointer;
+    color: #718096;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    transition: background .15s, color .15s;
+  }
+  .copy-btn:hover { background: #ebf8ff; color: #2b6cb0; border-color: #90cdf4; }
+  .copy-btn.copied { background: #c6f6d5; color: #276749; border-color: #9ae6b4; }
+  .copy-btn svg { width: 13px; height: 13px; }
+
+  #toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: #2d3748;
+    color: #fff;
+    padding: .6rem 1.2rem;
+    border-radius: .4rem;
+    font-size: .875rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+    z-index: 100;
+  }
+  #toast.show { opacity: 1; }
+
+  @media (max-width: 700px) {
+    .achievement-grid { grid-template-columns: 1fr 1fr; }
+    .achievement-cell { border-right: none; border-bottom: 1px solid #e2e8f0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Rubric Comment Viewer</h1>
+</header>
+
+<div class="controls">
+  <div class="control-group">
+    <label for="year-select">Year Level</label>
+    <select id="year-select">
+      <option value="">— Select year —</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label for="task-select">Task</label>
+    <select id="task-select" disabled>
+      <option value="">— Select task —</option>
+    </select>
+  </div>
+</div>
+
+<main id="main">
+  <p class="placeholder">Select a year level and task to view rubric comments.</p>
+</main>
+
+<div id="toast"></div>
+
+<script>
+const yearSel = document.getElementById('year-select');
+const taskSel = document.getElementById('task-select');
+const main    = document.getElementById('main');
+const toast   = document.getElementById('toast');
+
+let toastTimer;
+
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  toast.textContent = msg;
+  toast.classList.add('show');
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+async function loadYears() {
+  const res = await fetch('/api/year-levels');
+  const years = await res.json();
+  years.forEach(y => {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = `Year ${y}`;
+    yearSel.appendChild(opt);
+  });
+}
+
+async function loadTasks(year) {
+  taskSel.innerHTML = '<option value="">— Select task —</option>';
+  taskSel.disabled = true;
+  if (!year) return;
+  const res = await fetch(`/api/tasks?year=${year}`);
+  const tasks = await res.json();
+  tasks.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.name;
+    taskSel.appendChild(opt);
+  });
+  taskSel.disabled = tasks.length === 0;
+  if (tasks.length === 0) {
+    main.innerHTML = '<p class="placeholder">No tasks found for this year level.</p>';
+  }
+}
+
+async function loadComments(taskId) {
+  if (!taskId) {
+    main.innerHTML = '<p class="placeholder">Select a year level and task to view rubric comments.</p>';
+    return;
+  }
+  const res = await fetch(`/api/tasks/${taskId}/comments`);
+  if (!res.ok) { main.innerHTML = '<p class="placeholder">Error loading comments.</p>'; return; }
+  const data = await res.json();
+  renderComments(data);
+}
+
+function copyIcon() {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+  </svg>`;
+}
+
+function renderComments(data) {
+  const levels = ['A','B','C','D','E'];
+  const header = `
+    <div class="task-header">
+      <h2>${esc(data.task.name)}</h2>
+      <div class="meta">Year ${data.task.year_level}${ data.task.description ? ' · ' + esc(data.task.description) : '' }</div>
+    </div>`;
+
+  if (!data.criteria.length) {
+    main.innerHTML = header + '<p class="placeholder">No rubric criteria added yet.</p>';
+    return;
+  }
+
+  const cards = data.criteria.map(c => {
+    const descRow = c.description
+      ? `<div class="criterion-description">${esc(c.description)}</div>` : '';
+    const cells = levels.map(lvl => {
+      const text = c.comments[lvl] || '';
+      const copyBtn = text
+        ? `<button class="copy-btn" data-text="${esc(text)}" title="Copy to clipboard">${copyIcon()} Copy</button>`
+        : '';
+      return `
+        <div class="achievement-cell">
+          <span class="achievement-badge level-${lvl}">${lvl}</span>
+          ${ text
+              ? `<p class="comment-body">${esc(text)}</p>${copyBtn}`
+              : `<p class="empty-comment">No comment yet</p>` }
+        </div>`;
+    }).join('');
+    return `
+      <div class="criterion-card">
+        <div class="criterion-title">${esc(c.name)}</div>
+        ${descRow}
+        <div class="achievement-grid">${cells}</div>
+      </div>`;
+  }).join('');
+
+  main.innerHTML = header + `<div class="criteria-list">${cards}</div>`;
+
+  main.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.text;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = `${copyIcon()} Copied!`;
+        showToast('Comment copied to clipboard');
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `${copyIcon()} Copy`;
+        }, 1500);
+      });
+    });
+  });
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+yearSel.addEventListener('change', () => {
+  loadTasks(yearSel.value);
+  main.innerHTML = '<p class="placeholder">Select a task to view rubric comments.</p>';
+  taskSel.value = '';
+});
+
+taskSel.addEventListener('change', () => loadComments(taskSel.value));
+
+loadYears();
+</script>
+</body>
+</html>
