@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Heroes{% endblock %}
+
+{% block content %}
+  <h1>Heroes</h1>
+  <p>{{ heroes | length }} heroes on file.</p>
+
+  <div class="grid">
+    {% for hero in heroes %}
+      <a class="card hero-card" href="{{ url_for('hero_detail', hero_id=hero.id) }}">
+        <span class="badge badge-{{ hero.universe | lower }}">{{ hero.universe }}</span>
+        <h2>{{ hero.name }}</h2>
+        <p class="muted">{{ hero.real_name }} &middot; since {{ hero.first_appearance }}</p>
+      </a>
+    {% else %}
+      <p>No heroes found.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

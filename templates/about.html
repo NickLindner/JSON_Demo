@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+  <h1>About</h1>
+  <p>This site demonstrates a basic Flask + Jinja2 layout:</p>
+  <ul>
+    <li><code>app.py</code> defines the routes.</li>
+    <li><code>templates/base.html</code> holds the shared page structure.</li>
+    <li>Child templates use <code>{% raw %}{% extends "base.html" %}{% endraw %}</code> and override blocks.</li>
+    <li><code>static/css/style.css</code> styles every page.</li>
+  </ul>
+{% endblock %}

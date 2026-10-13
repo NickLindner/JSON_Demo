@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Home{% endblock %} | Hero Index</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="{{ url_for('index') }}">Hero Index</a>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('index') }}"
+                 class="{{ 'active' if request.endpoint == 'index' }}">Home</a></li>
+          <li><a href="{{ url_for('heroes') }}"
+                 class="{{ 'active' if request.endpoint in ('heroes', 'hero_detail') }}">Heroes</a></li>
+          <li><a href="{{ url_for('about') }}"
+                 class="{{ 'active' if request.endpoint == 'about' }}">About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      {% block footer %}
+        <p>Built with Flask &amp; Jinja2.</p>
+      {% endblock %}
+    </div>
+  </footer>
+</body>
+</html>

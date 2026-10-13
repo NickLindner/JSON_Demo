@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <section class="hero-banner">
+    <h1>Welcome to the Hero Index</h1>
+    <p>A tiny Flask site that renders superhero data from <code>superheroes.json</code>.</p>
+    <a class="button" href="{{ url_for('heroes') }}">Browse heroes</a>
+  </section>
+
+  <section class="features">
+    <div class="card">
+      <h2>Template inheritance</h2>
+      <p>Every page extends <code>base.html</code> and fills in its own <code>content</code> block.</p>
+    </div>
+    <div class="card">
+      <h2>Dynamic data</h2>
+      <p>The heroes page loops over JSON data with Jinja2's <code>{% raw %}{% for %}{% endraw %}</code> tag.</p>
+    </div>
+    <div class="card">
+      <h2>Plain CSS</h2>
+      <p>One stylesheet served from <code>static/css/style.css</code>, no frameworks.</p>
+    </div>
+  </section>
+{% endblock %}
